@@ -1,0 +1,33 @@
+Instructions
+
+Get the customers who have not placed any orders, sorted by customer_lname and then customer_fname
+Data Description
+
+Data is available in local file system /data/retail_db
+
+retail_db information:
+
+    Source directories: /data/retail_db/orders and /data/retail_db/customers
+    Source delimiter: comma(",")
+    Source Columns - orders - order_id, order_date, order_customer_id, order_status
+    Source Columns - customers - customer_id, customer_fname, customer_lname and many more
+
+Output Requirements
+
+    Target Columns: customer_lname, customer_fname
+    Number of Files: 1
+    Place the output file in the HDFS directory
+    /user/`whoami`/problem2/solution/
+    Replace `whoami` with your OS user name
+    File format should be text
+    delimiter is (",")
+    Compression: Uncompressed
+
+End of Problem
+
+Solution
+
+val p2ord = spark.read.schema("order_id int, order_date string, order_customer_id int, order_status string").csv("/public/retail_db/orders")
+val p2cust = spark.read.csv("/public/retail_db/customers")
+val p2jn = p2cust.join(p2ord,'_c0 === 'order_customer_id,"left_anti").sort('_c2,'_c1 ).select(concat('_c2 ,lit(","),'_c1))
+p2jn.coalesce(1).write.option("compression","none").text("/user/username/problem2/solution/")

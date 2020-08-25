@@ -27,7 +27,36 @@ End of Problem
 
 Solution
 
-val p2ord = spark.read.schema("order_id int, order_date string, order_customer_id int, order_status string").csv("/public/retail_db/orders")
-val p2cust = spark.read.csv("/public/retail_db/customers")
-val p2jn = p2cust.join(p2ord,'_c0 === 'order_customer_id,"left_anti").sort('_c2,'_c1 ).select(concat('_c2 ,lit(","),'_c1))
-p2jn.coalesce(1).write.option("compression","none").text("/user/username/problem2/solution/")
+val p2ord = spark.read.schema("order_id string, order_date string, order_customer_id string, order_status string").csv("/public/retail_db/orders")
+val p2cust = spark.read.csv("/public/retail_db/customers").selectExpr("_c0 as customer_id", "_c1 as customer_fname", "_c2 as customer_lname")
+val p2jn = p2cust.join(p2ord,'customer_id === 'order_customer_id,"left_anti").select('customer_lname, 'customer_fname).sort('customer_lname, 'customer_fname)
+p2jn.coalesce(1).write.mode("overwrite").csv("/user/username/problem2/solution/")
+
+Results:
+scala> spark.read.text("/user/username/problem2/solution/").show
++--------------+
+|         value|
++--------------+
+|   Bolton,Mary|
+|Ellison,Albert|
+| Green,Carolyn|
+|   Greene,Mary|
+|  Harrell,Mary|
+|    Lewis,Mary|
+|  Mueller,Mary|
+| Patel,Matthew|
+|     Shaw,Mary|
+|  Smith,Amanda|
+|  Smith,Ashley|
+|    Smith,Carl|
+|    Smith,Emma|
+|   Smith,Grace|
+|   Smith,James|
+|    Smith,Joan|
+| Smith,Kenneth|
+|   Smith,Kevin|
+|    Smith,Mary|
+|    Smith,Mary|
++--------------+
+only showing top 20 rows
+

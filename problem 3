@@ -1,0 +1,38 @@
+Instructions
+Get top 3 crime types based on number of incidents in RESIDENCE area using "Location Description"
+
+Data Description
+Data is available in HDFS under /public/crime/csv
+
+crime data information:
+
+Structure of data: (ID, Case Number, Date, Block, IUCR, Primary Type, Description, Location Description, Arrst, Domestic, Beat, District, Ward, Community Area, FBI Code, X Coordinate, Y Coordinate, Year, Updated on, Latitude, Longitude, Location)
+File format - text file
+Delimiter - "," (use regex while splitting split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1), as there are some fields with comma and enclosed using double quotes.
+Output Requirements
+Output Fields: crime_type, incident_count
+Output File Format: JSON
+Delimiter: N/A
+Compression: No
+Place the output file in the HDFS directory
+/user/`whoami`/problem3/solution/
+Replace `whoami` with your OS user name
+End of Problem
+
+Solution:
+val p3df = spark.read.csv("/public/crime/csv").selectExpr("_c0 as id","_c5 as crime_type", "_c7 as loc")
+p3df.filter("loc = 'RESIDENCE'")
+.groupBy('crime_type).agg(count('id).alias("incident_count"))
+.sort('incident_count desc).limit(3)
+.write.mode("overwrite").json("/user/username/problem3/solution/")
+
+Results:                                                
+scala> spark.read.json("/user/username/problem3/solution/").show
+
++-------------+--------------+
+|   crime_type|incident_count|
++-------------+--------------+
+|      BATTERY|        244394|
+|OTHER OFFENSE|        184667|
+|        THEFT|        142273|
++-------------+--------------+

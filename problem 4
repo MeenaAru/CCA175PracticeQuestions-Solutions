@@ -17,8 +17,8 @@ End of Problem
 
 Solution:
 Copy the data from your local directory to hdfs.
- data]$ hdfs dfs -put nyse .
+data]$ hdfs dfs -put nyse .
  
 val p4df = spark.read.schema("stockticker string, transactiondate string, openprice float, highprice float, lowprice float, closeprice float, volume bigint")
-.csv("/user/username/nyse")
+ .csv("/user/username/nyse")
 p4df.write.mode("overwrite").parquet("/user/username/problem4/solution/")

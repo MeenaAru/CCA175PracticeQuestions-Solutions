@@ -1,0 +1,24 @@
+Instructions
+Convert NYSE data into parquet
+
+NYSE data Description
+Data is available in local file system under /data/NYSE (ls -ltr /data/NYSE)
+
+NYSE Data information:
+
+Fields (stockticker:string, transactiondate:string, openprice:float, highprice:float, lowprice:float, closeprice:float, volume:bigint)
+Output Requirements
+Column Names: stockticker, transactiondate, openprice, highprice, lowprice, closeprice, volume
+Convert file format to parquet
+Place the output file in the HDFS directory
+/user/`whoami`/problem4/solution/
+Replace `whoami` with your OS user name
+End of Problem
+
+Solution:
+Copy the data from your local directory to hdfs.
+ data]$ hdfs dfs -put nyse .
+ 
+val p4df = spark.read.schema("stockticker string, transactiondate string, openprice float, highprice float, lowprice float, closeprice float, volume bigint")
+.csv("/user/username/nyse")
+p4df.write.mode("overwrite").parquet("/user/username/problem4/solution/")

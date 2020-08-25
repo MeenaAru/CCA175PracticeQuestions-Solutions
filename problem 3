@@ -22,9 +22,9 @@ End of Problem
 Solution:
 val p3df = spark.read.csv("/public/crime/csv").selectExpr("_c0 as id","_c5 as crime_type", "_c7 as loc")
 p3df.filter("loc = 'RESIDENCE'")
-.groupBy('crime_type).agg(count('id).alias("incident_count"))
-.sort('incident_count desc).limit(3)
-.write.mode("overwrite").json("/user/username/problem3/solution/")
+    .groupBy('crime_type).agg(count('id).alias("incident_count"))
+    .sort('incident_count desc).limit(3)
+    .write.mode("overwrite").json("/user/username/problem3/solution/")
 
 Results:                                                
 scala> spark.read.json("/user/username/problem3/solution/").show

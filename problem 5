@@ -27,29 +27,19 @@ p4df.selectExpr("explode(split(value,' ')) as word")
   .repartition(8).write.mode("overwrite").parquet("/user/mearu0705/problem5/solution/")
 
 Results:
-
-spark.read..parquet("/user/mearu0705/problem5/solution/")
-+--------------------+-------+                                                
-|                word|  count|
-+--------------------+-------+
-|              corbel|2925970|
-|  ��uninhabitedness|   6629|
-|          lebensraum|2927965|
-|          Spencerism|2926090|
-|  @?hyocholic|      1|
-|�����1��J$�גd...|      1|
-|         ]?>Hu|      1|
-|      �>eristically|     44|
-|   �bascrubbed|     46|
-|xONwinterproof|      1|
-|         ��refasten|   6544|
-|      �5bicorporeal|     47|
-|    �nonrepetition|     54|
-|           �Lchasmy|     55|
-|           stwinling|     52|
-|      ��pictorially|   6607|
-|�CBinsatiately|    106|
-|          ��becomma|   6449|
-|   ^]pamphlet|      1|
-|�����1��J$�גd...|      1|
-+--------------------+-------+
+scala> spark.read.parquet("/user/mearu0705/problem5/solution/").show(10,false)
++------------------------------------------+-----+                                                                                                                              
+|word                                      |count|
++------------------------------------------+-----+
+|����(�i�zn����uP~j�EDMunnopsidae   |1    |
+|����E�;d����3
+              �5AK�gfdastardliness|1    |
+|!RQkaryological                     |1    |
+|�Ñ�"��\l�RQamplexifoliate          |1    |
+|����'K#(�_$w�xz"W^]Eryon        |1    |
+||98intrabred                        |1    |
+|       43Bishareen                        |1    |
+|ONhysterogen                       |1    |
+|����׷�^�8�s��>�|!&�<;patroller      |2    |
+|�87schoolmasterism                  |58   |
++------------------------------------------+-----+

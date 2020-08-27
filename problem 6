@@ -26,10 +26,10 @@ val p6cust =spark.read.csv("/public/retail_db/customers")
                       .filter("_c7 ='TX'")
 val p6jn = p6cust.join(p6ord.select('order_customer_id),'customer_id === 'order_customer_id)
                  .groupBy('customer_fname,'customer_lname).agg(count('customer_id).alias("order_count"))
-p6jn.write.option("sep","\t").csv("/user/mearu0705/problem6/solution/")
+p6jn.write.option("sep","\t").csv("/user/username/problem6/solution/")
 
 Results:
-scala> spark.read.option("sep","\t").csv("/user/mearu0705/problem6/solution/").show
+scala> spark.read.option("sep","\t").csv("/user/username/problem6/solution/").show
 +---------+---------+---+
 |      _c0|      _c1|_c2|
 +---------+---------+---+

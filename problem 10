@@ -1,0 +1,41 @@
+
+Instructions
+Get number of LCAs filed for each year
+
+Data Description
+h1b data with ascii null "\0" as delimiter is available in HDFS
+
+h1b data information:
+
+HDFS Location: /public/h1b/h1b_data
+Ignore first record which is header of the data
+YEAR is 8th field in the data
+There are some LCAs for which YEAR is NA, ignore those records
+Output Requirements
+File Format: text
+Output Fields: YEAR, NUMBER_OF_LCAS
+Delimiter: Ascii null "\0"
+Place the output files in the HDFS directory
+/user/`whoami`/problem10/solution/
+Replace `whoami` with your OS user name
+End of Problem
+
+Solution:
+
+val p10df = spark.read.option("sep","\0").csv("/public/h1b/h1b_data").filter("_c7 != 'NA'")
+p10df.groupBy('_c7).agg(count('_c0).alias("NUMBER_OF_LCAS"))
+      .withColumnRenamed("_c7","YEAR")
+      .write.mode("overwrite").option("sep","\0").csv("/user/username/problem10/solution/")
+
+Results:
+spark.read.option("sep","\0").csv("/user/username/problem10/solution/").show
++----+------+
+| _c0|   _c1|
++----+------+
+|2016|647803|
+|2012|415607|
+|2014|519427|
+|2013|442114|
+|2011|358767|
+|2015|618727|
++----+------+

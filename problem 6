@@ -1,0 +1,57 @@
+Instructions
+Get total number of orders for each customer where the cutomer_state = 'TX'
+
+Data Description
+retail_db data is available in HDFS at /public/retail_db
+
+retail_db data information:
+
+Source directories: /public/retail_db/orders and /public/retail_db/customers
+Source Columns - orders - order_id, order_date, order_customer_id, order_status
+Source Columns - customers - customer_id, customer_fname, customer_lname, customer_state (8th column) and many more
+delimiter: (",")
+Output Requirements
+Output Fields: customer_fname, customer_lname, order_count
+File Format: text
+Delimiter: Tab character (\t)
+Place the result file in the HDFS directory
+/user/`whoami`/problem6/solution/
+Replace `whoami` with your OS user name
+End of Problem
+
+Solution:
+val p6ord = spark.read.schema("order_id int, order_date timestamp, order_customer_id int, order_status string").csv("/public/retail_db/orders")
+val p6cust =spark.read.csv("/public/retail_db/customers")
+                      .selectExpr("_c0 as customer_id", "_c1 as customer_fname", "_c2 as customer_lname")
+                      .filter("_c7 ='TX'")
+val p6jn = p6cust.join(p6ord.select('order_customer_id),'customer_id === 'order_customer_id)
+                 .groupBy('customer_fname,'customer_lname).agg(count('customer_id).alias("order_count"))
+p6jn.write.option("sep","\t").csv("/user/mearu0705/problem6/solution/")
+
+Results:
+scala> spark.read.option("sep","\t").csv("/user/mearu0705/problem6/solution/").show
++---------+---------+---+
+|      _c0|      _c1|_c2|
++---------+---------+---+
+|  Raymond| Richards|  4|
+|   Evelyn|   Wilson|  7|
+|     Mary|Christian|  5|
+| Nicholas|   Wright|  4|
+| Benjamin|     Cole|  6|
+|   Willie|   Galvan|  5|
+|   Sandra|  Bennett|  6|
+| Michelle|    Smith| 10|
+| Jonathan|    Smith|  9|
+|    Sarah|    Smith| 16|
+|     Mary|  Roberts|  4|
+|Elizabeth|     Ball|  2|
+|   Evelyn|     Lowe|  9|
+|Christina|    Ewing|  5|
+|    Janet|   Wright|  7|
+| Jonathan|     Cook|  6|
+| Margaret|    Villa|  4|
+|   Donald|  Sampson|  9|
+|    Kathy|   Little|  4|
+|     Mary| Mitchell|  6|
++---------+---------+---+
+only showing top 20 rows

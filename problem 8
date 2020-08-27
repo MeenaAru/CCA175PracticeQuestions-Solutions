@@ -22,10 +22,10 @@ import spark.implicits._
 
 val p7ord = spark.read.option("inferSchema","true").csv("/public/retail_db/orders").toDF("order_id", "order_date", "order_customer_id", "order_status")
 p7ord.filter("order_status = 'PENDING_PAYMENT'").sort('order_id)
-     .write.mode("overwrite").orc("/user/mearu0705/problem8/solution/")
+     .write.mode("overwrite").orc("/user/username/problem8/solution/")
 
 Results:                                                                                                       
-scala> spark.read.orc("/user/mearu0705/problem8/solution/").show
+scala> spark.read.orc("/user/username/problem8/solution/").show
 +--------+-------------------+-----------------+---------------+
 |order_id|         order_date|order_customer_id|   order_status|
 +--------+-------------------+-----------------+---------------+

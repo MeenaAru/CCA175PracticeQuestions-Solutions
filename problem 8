@@ -1,0 +1,43 @@
+Instructions
+List the order Items where the order_status = 'PENDING PAYMENT' order by order_id
+
+Data Description
+Data is available in HDFS location
+
+retail_db data information:
+
+Source directories: /data/retail_db/orders
+Source delimiter: comma(",")
+Source Columns - orders - order_id, order_date, order_customer_id, order_status
+Output Requirements
+Target columns: order_id, order_date, order_customer_id, order_status
+File Format: orc
+Place the output files in the HDFS directory
+/user/`whoami`/problem8/solution/
+Replace `whoami` with your OS user name
+End of Problem
+
+Solution:
+import spark.implicits._
+
+val p7ord = spark.read.option("inferSchema","true").csv("/public/retail_db/orders").toDF("order_id", "order_date", "order_customer_id", "order_status")
+p7ord.filter("order_status = 'PENDING_PAYMENT'").sort('order_id)
+     .write.mode("overwrite").orc("/user/mearu0705/problem8/solution/")
+
+Results:                                                                                                       
+scala> spark.read.orc("/user/mearu0705/problem8/solution/").show
++--------+-------------------+-----------------+---------------+
+|order_id|         order_date|order_customer_id|   order_status|
++--------+-------------------+-----------------+---------------+
+|   68491|2014-05-24 00:00:00|             7736|PENDING_PAYMENT|
+|   68496|2014-05-25 00:00:00|             3156|PENDING_PAYMENT|
+|   68497|2014-05-25 00:00:00|             1973|PENDING_PAYMENT|
+|   68498|2014-05-26 00:00:00|            11257|PENDING_PAYMENT|
+|   68499|2014-05-26 00:00:00|            10220|PENDING_PAYMENT|
+|   68508|2014-05-30 00:00:00|             3081|PENDING_PAYMENT|
+|   68511|2014-05-31 00:00:00|             5012|PENDING_PAYMENT|
+|   68512|2014-06-01 00:00:00|             1137|PENDING_PAYMENT|
+|   68517|2014-06-04 00:00:00|              931|PENDING_PAYMENT|
+|   68523|2014-06-05 00:00:00|             1432|PENDING_PAYMENT|
+|   68533|2014-06-07 00:00:00|            10699|PENDING_PAYMENT|
++--------+-------------------+-----------------+---------------+

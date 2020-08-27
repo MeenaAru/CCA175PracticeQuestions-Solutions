@@ -24,16 +24,22 @@ Place the output file in the HDFS directory
 Replace `whoami` with your OS user name
 End of Problem
 
-val p7ord = spark.read.option("inferSchema","true").csv("/public/retail_db/orders").toDF("order_id", "order_date", "order_customer_id", "order_status").filter("order_date ='2013-07-26' and order_status in ('COMPLETE','CLOSED')")val p7oitm =spark.read.option("inferSchema","true").csv("/public/retail_db/order_items").toDF("order_item_id","order_item_order_id","order_item_product_id","order_item_quantity","order_item_subtotal","order_item_product_price")
-val p7prod = spark.read.option("inferSchema","true").csv("/public/retail_db/products").toDF("product_id","product_category_id","product_name","product_description","product_price","product_image")
+val p7ord = spark.read.option("inferSchema","true").csv("/public/retail_db/orders")
+                 .toDF("order_id", "order_date", "order_customer_id", "order_status")
+                 .filter("order_date ='2013-07-26' and order_status in ('COMPLETE','CLOSED')")
+val p7oitm = spark.read.option("inferSchema","true").csv("/public/retail_db/order_items")
+                  .toDF("order_item_id","order_item_order_id","order_item_product_id","order_item_quantity","order_item_subtotal","order_item_product_price")
+val p7prod = spark.read.option("inferSchema","true").csv("/public/retail_db/products")
+                  .toDF("product_id","product_category_id","product_name","product_description","product_price","product_image")
 
 val p7jn = p7oitm.join(p7ord,'order_item_order_id === 'order_id).join(p7prod,'order_item_product_id === 'product_id)
 
-scala> p7jn.groupBy('order_item_product_id,'product_name,'product_category_id,'order_date).agg(sum('order_item_subtotal).alias("revenue")).sort('revenue desc).limit(5).selectExpr("order_date", "revenue as order_revenue", "product_name", "product_category_id").write.mode("overwrite").option("sep",":").csv("/user/mearu0705/problem7/solution/")
-warning: there was one feature warning; re-run with -feature for details
- 
+p7jn.groupBy('order_item_product_id,'product_name,'product_category_id,'order_date).agg(sum('order_item_subtotal).alias("revenue"))
+    .sort('revenue desc).limit(5).selectExpr("order_date", "revenue as order_revenue", "product_name", "product_category_id")
+    .write.mode("overwrite").option("sep",":").csv("/user/username/problem7/solution/")
+
 Results: 
-scala> spark.read.option("sep",":").csv("/user/mearu0705/problem7/solution/").show
+scala> spark.read.option("sep",":").csv("/user/username/problem7/solution/").show
 +--------------------+------------------+--------------------+---+
 |                 _c0|               _c1|                 _c2|_c3|
 +--------------------+------------------+--------------------+---+

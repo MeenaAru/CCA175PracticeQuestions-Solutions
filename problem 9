@@ -1,0 +1,39 @@
+Instructions
+Remove header from h1b data
+
+Data Description
+h1b data with ascii null "\0" as delimiter is available in HDFS
+
+h1b data information:
+
+HDFS location: /public/h1b/h1b_data
+First record is the header for the data
+Output Requirements
+Remove the header from the data and save rest of the data as is
+Data should be compressed using snappy algorithm
+Place the H1B data in the HDFS directory
+/user/`whoami`/problem9/solution/
+Replace `whoami` with your OS user name
+End of Problem
+
+Solution:
+
+val p9df = spark.read.option("sep","\0").option("inferSchema","true").option("header","true").csv("/public/h1b/h1b_data")
+p9df.write.option("compression","snappy").mode("overwrite").option("sep","\0").csv("/user/mearu0705/problem9/solution/")
+
+Results:
+scala> spark.read.option("sep","\0").csv("/user/'whoami'/problem9/solution/").show
++-------+-------------------+--------------------+--------------------+--------------------+---+-------+----+--------------------+------------+----------+
+|    _c0|                _c1|                 _c2|                 _c3|                 _c4|_c5|    _c6| _c7|                 _c8|         _c9|      _c10|
++-------+-------------------+--------------------+--------------------+--------------------+---+-------+----+--------------------+------------+----------+
+|1644465|          CERTIFIED|ROBERT BOSCH BATT...|Software Develope...|   SOFTWARE ENGINEER|  Y|  73341|2014|     ORION, MICHIGAN|          NA|        NA|
+|1644466|          CERTIFIED|TATA CONSULTANCY ...|Computer Occupati...|   TECHNICAL ANALYST|  Y|  56576|2014|AGOURA HILLS, CAL...|-118.7616764|34.1533395|
+|1644467|          CERTIFIED|UNIVERSITY OF WAS...|   Anesthesiologists|ACTING INSTRUCTOR...|  Y| 100147|2014| SEATTLE, WASHINGTON|-122.3320708|47.6062095|
+|1644468|          CERTIFIED|UNIVERSITY OF NOT...|  Chemical Engineers|RESEARCH ASSOCIAT...|  Y|  37440|2014| NOTRE DAME, INDIANA| -86.2379328|41.7001908|
+|1644469|          CERTIFIED|INFINITY TECH GRO...|Database Administ...|  DATABASE DEVELOPER|  Y|  54933|2014|WHITE PLAINS, NEW...| -73.7629097|41.0339862|
+|1644470|          CERTIFIED|TIGER FINANCIAL M...|Financial Special...|SENIOR FINANCIAL ...|  Y|  70283|2014|     WICHITA, KANSAS|  -97.330053|37.6871761|
+|1644471|CERTIFIED-WITHDRAWN| NEW YORK UNIVERSITY|Area, Ethnic, and...|MASTER TEACHER/ A...|  N|56908.8|2014|  NEW YORK, NEW YORK| -74.0059413|40.7127837|
+|1644472|          CERTIFIED|            PTC INC.|Computer Systems ...|SOFTWARE DEVELOPM...|  Y|  57970|2014|   BLAINE, MINNESOTA| -93.2349489|45.1607987|
+|1644473|          CERTIFIED|ZILLION TECHNOLOG...|Software Develope...|      JAVA DEVELOPER|  Y|  69493|2014|PHILADELPHIA, PEN...| -75.1652215|39.9525839|
+|1644474|          CERTIFIED| ANIRA SOLUTIONS INC|Computer Programmers|      SYSTEM ANALYST|  Y|  67558|2014|   ASHBURN, VIRGINIA| -77.4874416|39.0437567|
++-------+-------------------+--------------------+--------------------+--------------------+---+-------+----+--------------------+------------+----------+

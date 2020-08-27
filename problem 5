@@ -1,0 +1,55 @@
+Instructions
+Get word count for the input data using space as delimiter (for each word, we need to get how many times it is repeated in the entire input data set)
+
+Data Description
+Data is available in HDFS /public/randomtextwriter
+
+word count data information:
+
+Number of executors should be 10
+executor memory should be 3 GB
+Executor cores should be 20 in total (2 per executor)
+Number of output files should be 8
+Avro dependency details: groupId -> com.databricks, artifactId -> spark-avro_2.10, version -> 2.0.1
+Output Requirements
+Output File format: Avro
+Output fields: word, count
+Compression: Uncompressed
+Place the customer files in the HDFS directory
+/user/`whoami`/problem5/solution/
+Replace `whoami` with your OS user name
+End of Problem
+
+Solution:
+val p4df = spark.read.text("/public/randomtextwriter")
+p4df.selectExpr("explode(split(value,' ')) as word")
+  .groupBy('word).agg(count('word).alias("count"))
+  .repartition(8).write.mode("overwrite").parquet("/user/mearu0705/problem5/solution/")
+
+Results:
+
+spark.read..parquet("/user/mearu0705/problem5/solution/")
++--------------------+-------+                                                
+|                word|  count|
++--------------------+-------+
+|              corbel|2925970|
+|  ��uninhabitedness|   6629|
+|          lebensraum|2927965|
+|          Spencerism|2926090|
+|  @?hyocholic|      1|
+|�����1��J$�גd...|      1|
+|         ]?>Hu|      1|
+|      �>eristically|     44|
+|   �bascrubbed|     46|
+|xONwinterproof|      1|
+|         ��refasten|   6544|
+|      �5bicorporeal|     47|
+|    �nonrepetition|     54|
+|           �Lchasmy|     55|
+|           stwinling|     52|
+|      ��pictorially|   6607|
+|�CBinsatiately|    106|
+|          ��becomma|   6449|
+|   ^]pamphlet|      1|
+|�����1��J$�גd...|      1|
++--------------------+-------+

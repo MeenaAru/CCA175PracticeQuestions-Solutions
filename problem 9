@@ -18,8 +18,8 @@ End of Problem
 
 Solution:
 
-val p9df = spark.read.option("sep","\0").option("inferSchema","true").option("header","true").csv("/public/h1b/h1b_data")
-p9df.write.option("compression","snappy").mode("overwrite").option("sep","\0").csv("/user/username/problem9/solution/")
+val p9df = spark.read.option("sep","\u0000").option("inferSchema","true").option("header","true").csv("/public/h1b/h1b_data")
+p9df.write.option("compression","snappy").mode("overwrite").option("sep","\u0000").csv("/user/username/problem9/solution/")
 
 Results:
 scala> spark.read.option("sep","\0").csv("/user/username/problem9/solution/").show

@@ -22,10 +22,10 @@ End of Problem
 
 Solution:
 
-val p10df = spark.read.option("sep","\0").csv("/public/h1b/h1b_data").filter("_c7 != 'NA'")
+val p10df = spark.read.option("sep","\u0000").csv("/public/h1b/h1b_data").filter("_c7 != 'NA'")
 p10df.groupBy('_c7).agg(count('_c0).alias("NUMBER_OF_LCAS"))
       .withColumnRenamed("_c7","YEAR")
-      .write.mode("overwrite").option("sep","\0").csv("/user/username/problem10/solution/")
+      .write.mode("overwrite").option("sep","\u0000").csv("/user/username/problem10/solution/")
 
 Results:
 spark.read.option("sep","\0").csv("/user/username/problem10/solution/").show

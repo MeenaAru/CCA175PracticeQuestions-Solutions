@@ -1,0 +1,42 @@
+Instructions
+Get top 5 employers for year 2016 where the status is WITHDRAWN or CERTIFIED-WITHDRAWN or DENIED
+
+Data Description
+h1b data with ascii null "\0" as delimiter is available in HDFS
+
+h1b data information:
+
+HDFS Location: /public/h1b/h1b_data
+Ignore first record which is header of the data
+YEAR is 7th field in the data
+STATUS is 2nd field in the data
+EMPLOYER is 3rd field in the data
+There are some LCAs for which YEAR is NA, ignore those records
+Output Requirements
+File Format: parquet
+Output Fields: employer_name, lca_count
+Data needs to be in descending order by count
+Place the output files in the HDFS directory
+/user/`whoami`/problem12/solution/
+Replace `whoami` with your OS user name
+End of Problem
+
+Solution:
+val p12df =spark.read.option("sep","\u0000").csv("/public/h1b/h1b_data").filter("_c7='2016' and _c1 in ('WITHDRAWN','CERTIFIED-WITHDRAWN','DENIED')")
+p12df.groupBy('_c2).agg(count('_c0).alias("lca_count"))
+     .withColumnRenamed("_c2","employer_name")
+     .sort('lca_count desc)
+     .limit(5)
+     .write.mode("overwrite").parquet("/user/username/problem12/solution/")
+
+Results:
+scala> spark.read.parquet("/user/username/problem12/solution/").show
++--------------------+---------+
+|       employer_name|lca_count|
++--------------------+---------+
+|IBM INDIA PRIVATE...|     1963|
+|         GOOGLE INC.|     1608|
+|COGNIZANT TECHNOL...|     1323|
+|       WIPRO LIMITED|     1079|
+|     IBM CORPORATION|      816|
++--------------------+---------+

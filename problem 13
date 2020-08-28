@@ -1,0 +1,54 @@
+Instructions
+Copy all h1b data from HDFS to Hive table excluding those where year is NA or prevailing_wage is NA
+
+Data Description
+h1b data with ascii null "\0" as delimiter is available in HDFS
+
+h1b data information:
+
+HDFS Location: /public/h1b/h1b_data_noheader
+Fields:
+ID, CASE_STATUS, EMPLOYER_NAME, SOC_NAME, JOB_TITLE, FULL_TIME_POSITION, PREVAILING_WAGE, YEAR, WORKSITE, LONGITUDE, LATITUDE
+Ignore data where PREVAILING_WAGE is NA or YEAR is NA
+PREVAILING_WAGE is 7th field
+YEAR is 8th field
+Number of records matching criteria: 3002373
+Output Requirements
+Save it in Hive Database
+Create Database: CREATE DATABASE IF NOT EXISTS `whoami`
+Switch Database: USE `whoami`
+Save data to hive table h1b_data
+Create table command:
+
+CREATE TABLE h1b_data (
+  ID                 INT,
+  CASE_STATUS        STRING,
+  EMPLOYER_NAME      STRING,
+  SOC_NAME           STRING,
+  JOB_TITLE          STRING,
+  FULL_TIME_POSITION STRING,
+  PREVAILING_WAGE    DOUBLE,
+  YEAR               INT,
+  WORKSITE           STRING,
+  LONGITUDE          STRING,
+  LATITUDE           STRING
+)
+                
+Replace `whoami` with your OS user name
+End of Problem
+
+Solution:
+val p13df = spark.read.option("sep","\u0000").option("inferSchema","true").csv("/public/h1b/h1b_data_noheader")
+                      .toDF("ID","CASE_STATUS","EMPLOYER_NAME","SOC_NAME","JOB_TITLE","FULL_TIME_POSITION","PREVAILING_WAGE","YEAR","WORKSITE","LONGITUDE","LATITUDE")
+                      .filter("year!='NA' and prevailing_wage !='NA'")
+                      .withColumn("year",expr("cast (year as int)"))
+                      .withColumn("prevailing_wage",expr("cast(prevailing_wage as double)"))
+p13df.write.mode("overwrite").saveAsTable("database_name.h1b_data")
+
+Results:
+scala> spark.sql("select count(*) from h1b_data").show
++--------+
+|count(1)|
++--------+
+| 3002373|
++--------+

@@ -1,0 +1,40 @@
+Read orderitems and products from HDFS location
+Produce this output :
+ORDER_ITEM_ORDER_ID PRODUCT_ID PRODUCT_NAME PRODUCT_PRICE ORDER_SUBTOTAL
+Save above output as avro snappy in hdfs location /user/yourusername/jay/problem20/output-avro-snappy/
+
+Results:
+val p20prod = spark.read.csv("/public/retail_db/products").toDF("PRODUCT_ID","product_category_id","PRODUCT_NAME","product_description","PRODUCT_PRICE","product_image")
+val p20ordit = spark.read.csv("/public/retail_db/order_items")
+
+val p20jn = p20ordit.join(p20prod,'_c2 === 'PRODUCT_ID)
+                    .selectExpr("_c1 as ORDER_ITEM_ORDER_ID","PRODUCT_ID", "PRODUCT_NAME", "PRODUCT_PRICE", "_c4 as ORDER_SUBTOTAL")
+
+p20jn.write.option("compression","snappy").avro("/user/username/problem20/output-avro-snappy/")
+                                                                                                                                                                                                          
+scala> spark.read.option("compression","snappy").avro("/user/username/problem20/output-avro-snappy/").show
++-------------------+----------+--------------------+-------------+--------------+
+|ORDER_ITEM_ORDER_ID|PRODUCT_ID|        PRODUCT_NAME|PRODUCT_PRICE|ORDER_SUBTOTAL|
++-------------------+----------+--------------------+-------------+--------------+
+|                  1|       957|Diamondback Women...|       299.98|        299.98|
+|                  2|      1073|Pelican Sunstream...|       199.99|        199.99|
+|                  2|       502|Nike Men's Dri-FI...|         50.0|         250.0|
+|                  2|       403|Nike Men's CJ Eli...|       129.99|        129.99|
+|                  4|       897|Team Golf New Eng...|        24.99|         49.98|
+|                  4|       365|Perfect Fitness P...|        59.99|        299.95|
+|                  4|       502|Nike Men's Dri-FI...|         50.0|         150.0|
+|                  4|      1014|O'Brien Men's Neo...|        49.98|        199.92|
+|                  5|       957|Diamondback Women...|       299.98|        299.98|
+|                  5|       365|Perfect Fitness P...|        59.99|        299.95|
+|                  5|      1014|O'Brien Men's Neo...|        49.98|         99.96|
+|                  5|       957|Diamondback Women...|       299.98|        299.98|
+|                  5|       403|Nike Men's CJ Eli...|       129.99|        129.99|
+|                  7|      1073|Pelican Sunstream...|       199.99|        199.99|
+|                  7|       957|Diamondback Women...|       299.98|        299.98|
+|                  7|       926|Glove It Imperial...|        15.99|         79.95|
+|                  8|       365|Perfect Fitness P...|        59.99|        179.97|
+|                  8|       365|Perfect Fitness P...|        59.99|        299.95|
+|                  8|      1014|O'Brien Men's Neo...|        49.98|        199.92|
+|                  8|       502|Nike Men's Dri-FI...|         50.0|          50.0|
++-------------------+----------+--------------------+-------------+--------------+
+only showing top 20 rows

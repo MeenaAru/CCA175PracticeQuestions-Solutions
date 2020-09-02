@@ -17,13 +17,13 @@ File Format: text
 Delimiter: tab character "\t"
 Output Field Order: year, lca_count
 Place the output files in the HDFS directory
-/user/`whoami`/problem19/solution/
+/user/`whoami`/problem17/solution/
 Replace `whoami` with your OS user name
 End of Problem
 
 Solution:
-val p19df = spark.read.option("sep","\0").csv("/public/h1b/h1b_data_noheader")
-p19df.selectExpr("_c7 as year","_c2 as employer_name")
+val p17df = spark.read.option("sep","\0").csv("/public/h1b/h1b_data_noheader")
+p79df.selectExpr("_c7 as year","_c2 as employer_name")
   .filter("year != 'NA'")
   .groupBy('year).agg(count('employer_name).alias("lca_count"))
-  .write.mode("overwrite").option("sep","\t").csv("/user/username/problem19/solution/")
+  .write.mode("overwrite").option("sep","\t").csv("/user/username/problem17/solution/")

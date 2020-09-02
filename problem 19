@@ -1,0 +1,36 @@
+Consider orders only in “COMPLETE” status and order id between 1000 and 50000 (1001 to 49999)
+Save the output (only 2 columns orderid and orderstatus) in parquet format with gzip compression in location
+ /user/yourusername/problem19/
+Advance : Try if you can save output only in 2 files (Tip : use coalesce(2))
+
+Solution:
+val p19ord = spark.sql("select order_id,order_status from orders where order_status = 'COMPLETE' and order_id between 1000 and 49999")
+p19ord.coalesce(2).write.option("compression","gzip").parquet("/user/username/problem19/")
+
+Results:
+spark.read.option("compression","gzip").parquet("/user/username/problem19/").show
++--------+------------+
+|order_id|order_status|
++--------+------------+
+|    1001|    COMPLETE|
+|    1003|    COMPLETE|
+|    1004|    COMPLETE|
+|    1006|    COMPLETE|
+|    1009|    COMPLETE|
+|    1010|    COMPLETE|
+|    1011|    COMPLETE|
+|    1018|    COMPLETE|
+|    1021|    COMPLETE|
+|    1024|    COMPLETE|
+|    1026|    COMPLETE|
+|    1030|    COMPLETE|
+|    1031|    COMPLETE|
+|    1032|    COMPLETE|
+|    1034|    COMPLETE|
+|    1035|    COMPLETE|
+|    1038|    COMPLETE|
+|    1039|    COMPLETE|
+|    1040|    COMPLETE|
+|    1051|    COMPLETE|
++--------+------------+
+

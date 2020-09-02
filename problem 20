@@ -1,7 +1,7 @@
 Read orderitems and products from HDFS location
 Produce this output :
 ORDER_ITEM_ORDER_ID PRODUCT_ID PRODUCT_NAME PRODUCT_PRICE ORDER_SUBTOTAL
-Save above output as avro snappy in hdfs location /user/yourusername/jay/problem20/output-avro-snappy/
+Save above output as avro snappy in hdfs location /user/yourusername/problem20/output-avro-snappy/
 
 Results:
 val p20prod = spark.read.csv("/public/retail_db/products").toDF("PRODUCT_ID","product_category_id","PRODUCT_NAME","product_description","PRODUCT_PRICE","product_image")
@@ -11,7 +11,8 @@ val p20jn = p20ordit.join(p20prod,'_c2 === 'PRODUCT_ID)
                     .selectExpr("_c1 as ORDER_ITEM_ORDER_ID","PRODUCT_ID", "PRODUCT_NAME", "PRODUCT_PRICE", "_c4 as ORDER_SUBTOTAL")
 
 p20jn.write.option("compression","snappy").avro("/user/username/problem20/output-avro-snappy/")
-                                                                                                                                                                                                          
+
+Solution:
 scala> spark.read.option("compression","snappy").avro("/user/username/problem20/output-avro-snappy/").show
 +-------------------+----------+--------------------+-------------+--------------+
 |ORDER_ITEM_ORDER_ID|PRODUCT_ID|        PRODUCT_NAME|PRODUCT_PRICE|ORDER_SUBTOTAL|

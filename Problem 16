@@ -1,0 +1,33 @@
+Instructions
+Get the name of stocks displayed along with other information
+
+Data Description
+NYSE data with "," as delimiter is available in HDFS
+
+NYSE data information:
+
+HDFS location: /public/nyse
+There is no header in the data
+NYSE Symbols data with tab character (\t) as delimiter is available in HDFS
+
+NYSE Symbols data information:
+
+HDFS location: /public/nyse_symbols
+First line is header and it should be included
+Output Requirements
+Get all NYSE details along with stock name if exists, if not stockname should be empty
+Column Order: stockticker, stockname, transactiondate, openprice, highprice, lowprice, closeprice, volume
+Delimiter: ,
+File Format: text
+Place the data in the HDFS directory
+/user/`whoami`/problem18/solution/
+Replace `whoami` with your OS user name
+End of Problem
+
+Solution:
+val p18symb = spark.read.option("sep","\t").option("inferSchema","true").option("header","true").csv("/public/nyse_symbols")
+val p18nyse = spark.read.option("sep",",").csv("/public/nyse")
+p18nyse.join(p18symb,'_c0 === 'Symbol,"left")
+        .select ('_c0, 'Description, '_c1, '_c2, '_c3, '_c4, '_c5, '_c6)
+        .na.fill("")
+        .write.mode("overwrite").csv("/user/username/problem18/solution/")

@@ -1,0 +1,63 @@
+Instructions
+Get the stock tickers from NYSE data for which full name is missing in NYSE symbols data
+
+Data Description
+NYSE data with "," as delimiter is available in HDFS
+
+NYSE data information:
+
+HDFS location: /public/nyse
+There is no header in the data
+NYSE Symbols data with " " as delimiter is available in HDFS
+
+NYSE Symbols data information:
+
+HDFS location: /public/nyse_symbols
+First line is header and it should be included
+Output Requirements
+Get unique stock ticker for which corresponding names are missing in NYSE symbols data
+Save data back to HDFS
+File Format: avro
+Avro dependency details:
+groupId -> com.databricks, artifactId -> spark-avro_2.10, version -> 2.0.1
+Place the sorted NYSE data in the HDFS directory
+/user/`whoami`/problem17/solution/
+Replace `whoami` with your OS user name
+End of Problem
+
+Solution:
+val p15nyse = spark.read.option("inferSchema","true").csv("/public/nyse")
+val p15nyseSym = spark.read.option("inferSchema","true")
+                           .option("header","true")
+                           .option("sep","\t")
+                           .csv("/public/nyse_symbols")
+val p15join = p15nyse.join(p15nyseSym,'_c0 === 'Symbol,"left_anti")
+                     .select('_c0.as("stock_ticker")).distinct
+p15join.write.avro("/user/username/problem15/solution/")
+
+Results:
+scala> spark.read.avro("/user/username/problem15/solution/").show
+------------+                                                                                                                                                                                            
+|stock_ticker|
++------------+
+|       NRF-B|
+|         TLN|
+|         NRF|
+|         TMH|
+|         CMN|
+|         NCT|
+|         ACW|
+|       PRE-D|
+|       NCT-B|
+|         DMD|
+|       NCT-D|
+|         KCC|
+|        CLNY|
+|       HLT.P|
+|        HTGZ|
+|          AV|
+|        AA-B|
+|        FLTX|
+|       HLS.W|
+|         CBX|
++------------+

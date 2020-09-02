@@ -1,0 +1,30 @@
+Read data from hive and perform transformation and save it back in HDFS
+Read table orders
+Produce output in this format (2 fields) , sort by order count in descending 
+ORDER_STATUS : ORDER_COUNT
+COMPLETE 54
+CANCELLED 89
+INPROGRESS 23
+Save above output in avro snappy compression in avro format in hdfs location /user/yourusername/problem18
+
+Solution:
+val p18ord = spark.sql("select * from orders")
+p18ord.groupBy('order_status).agg(count('order_id).alias("order_count"))
+      .sort('order_count desc)
+      .write.option("compression","snappy").avro("/user/username/problem18/")
+      
+Results:
+scala> spark.read.option("compression","snappy").parquet("/user/username/problem18/").show
++---------------+-----------+
+|   order_status|order_count|
++---------------+-----------+
+|PENDING_PAYMENT|      15030|
+|SUSPECTED_FRAUD|       1558|
+| PAYMENT_REVIEW|        729|
+|     PROCESSING|       8275|
+|       COMPLETE|      22899|
+|       CANCELED|       1428|
+|        PENDING|       7610|
+|        ON_HOLD|       3798|
+|         CLOSED|       7556|
++---------------+-----------+

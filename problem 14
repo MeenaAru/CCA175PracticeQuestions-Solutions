@@ -1,0 +1,50 @@
+Instructions
+Get NYSE data in ascending order by date and descending order by volume
+
+Data Description
+NYSE data with "," as delimiter is available in HDFS
+
+NYSE data information:
+
+HDFS location: /public/nyse
+There is no header in the data
+Output Requirements
+Save data back to HDFS
+Column order: stockticker, transactiondate, openprice, highprice, lowprice, closeprice, volume
+File Format: text
+Delimiter: :
+Place the sorted NYSE data in the HDFS directory
+/user/`whoami`/problem16/solution/
+Replace `whoami` with your OS user name
+End of Problem
+
+Solution:
+val p14df = spark.read.option("inferSchema","true").csv("/public/nyse").sort('_c1, '_c6 desc)
+p46df.write.mode("overwrite").option("sep",":").csv("/user/username/problem14/solution/")
+ 
+Results:
+ spark.read.text("/user/username/problem16/solution/").show(false)
++--------------------------------------------------+
+|value                                             |
++--------------------------------------------------+
+|STZ:19970101:3.36:3.44:3.36:3.44:4160000          |
+|ATI:19970101:38.5:38.5:36.73:36.95:264950         |
+|REV:19970101:29.63:29.88:29.63:29.63:42500        |
+|HMY:19970101:10.5:10.5:10.5:10.5:600              |
+|BRK.A:19970101:34400.0:34400.0:34000.0:34100.0:290|
+|AA:19970101:47.82:47.82:47.82:47.82:0             |
+|ABC:19970101:6.03:6.03:6.03:6.03:0                |
+|ABM:19970101:9.25:9.25:9.25:9.25:0                |
+|ABT:19970101:25.37:25.37:25.37:25.37:0            |
+|ABX:19970101:28.75:28.75:28.75:28.75:0            |
+|ACP:19970101:9.12:9.12:9.12:9.12:0                |
+|ACV:19970101:16.0:16.0:16.0:16.0:0                |
+|ADC:19970101:21.37:21.37:21.37:21.37:0            |
+|ADM:19970101:17.24:17.24:17.24:17.24:0            |
+|ADX:19970101:13.16:13.16:13.16:13.16:0            |
+|AED:19970101:31.5:31.5:31.5:31.5:0                |
+|AEE:19970101:38.5:38.5:38.5:38.5:0                |
+|AEG:19970101:15.2:15.2:15.2:15.2:0                |
+|AEM:19970101:14.0:14.0:14.0:14.0:0                |
+|AEP:19970101:41.12:41.12:41.12:41.12:0            |
++--------------------------------------------------+

@@ -21,7 +21,7 @@ File Format: avro
 Avro dependency details:
 groupId -> com.databricks, artifactId -> spark-avro_2.10, version -> 2.0.1
 Place the sorted NYSE data in the HDFS directory
-/user/`whoami`/problem17/solution/
+/user/`whoami`/problem15/solution/
 Replace `whoami` with your OS user name
 End of Problem
 

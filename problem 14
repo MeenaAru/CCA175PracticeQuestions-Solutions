@@ -14,16 +14,16 @@ Column order: stockticker, transactiondate, openprice, highprice, lowprice, clos
 File Format: text
 Delimiter: :
 Place the sorted NYSE data in the HDFS directory
-/user/`whoami`/problem16/solution/
+/user/`whoami`/problem14/solution/
 Replace `whoami` with your OS user name
 End of Problem
 
 Solution:
 val p14df = spark.read.option("inferSchema","true").csv("/public/nyse").sort('_c1, '_c6 desc)
-p46df.write.mode("overwrite").option("sep",":").csv("/user/username/problem14/solution/")
+p14df.write.mode("overwrite").option("sep",":").csv("/user/username/problem14/solution/")
  
 Results:
- spark.read.text("/user/username/problem16/solution/").show(false)
+ spark.read.text("/user/username/problem14/solution/").show(false)
 +--------------------------------------------------+
 |value                                             |
 +--------------------------------------------------+

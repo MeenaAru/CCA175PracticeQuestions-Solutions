@@ -1,0 +1,49 @@
+Details - Duration 40 minutes
+Data set URL 825
+Choose language of your choice Python or Scala
+Data is available in HDFS file system under /public/crime/csv
+You can check properties of files using hadoop fs -ls -h /public/crime/csv
+Structure of data (ID,Case Number,Date,Block,IUCR,Primary Type,Description,Location Description,Arrest,Domestic,Beat,District,Ward,Community Area,FBI Code,X Coordinate,Y Coordinate,Year,Updated On,Latitude,Longitude,Location)
+File format - text file
+Delimiter - “,”
+Get monthly count of primary crime type, sorted by month in ascending and number of crimes per type in descending order
+Store the result in HDFS path /user/<YOUR_USER_ID>/solutions/solution01/crimes_by_type_by_month
+Output File Format: TEXT
+Output Columns: Month in YYYYMM format, crime count, crime type
+Output Delimiter: \t (tab delimited)
+Output Compression: gzip
+
+
+scala> val p21df =spark.read.option("header","true").option("inferSchema","true").csv("/public/crime/csv")
+p21df: org.apache.spark.sql.DataFrame = [ID: int, Case Number: string ... 20 more fields]                                                                                                                 
+
+scala> p21df..withColumn("Month",expr("date_format(to_date(substring(Date,0,10),'MM/dd/yyyy'),'yyyyMM')")).groupBy("Month","Primary Type").agg(count('ID).alias("crime_count")).show
+<console>:1: error: identifier expected but '.' found.
+p21df..withColumn("Month",expr("date_format(to_date(substring(Date,0,10),'MM/dd/yyyy'),'yyyyMM')")).groupBy("Month","Primary Type").agg(count('ID).alias("crime_count")).show
+      ^
+
+scala> p21df.withColumn("Month",expr("date_format(to_date(substring(Date,0,10),'MM/dd/yyyy'),'yyyyMM')")).groupBy("Month","Primary Type").agg(count('ID).alias("crime_count")).show
++------+--------------------+-----------+                                                                                                                                                                 
+| Month|        Primary Type|crime_count|
++------+--------------------+-----------+
+|200704| MOTOR VEHICLE THEFT|       1464|
+|200906|       OTHER OFFENSE|       2154|
+|200406|             ASSAULT|       2761|
+|200911|   WEAPONS VIOLATION|        327|
+|200102| CRIM SEXUAL ASSAULT|        135|
+|201008|             ROBBERY|       1316|
+|201011|             BATTERY|       4649|
+|201009|           NARCOTICS|       3615|
+|201209|NON-CRIMINAL (SUB...|          1|
+|201509|INTERFERENCE WITH...|        115|
+|200104|     CRIMINAL DAMAGE|       4922|
+|201207|            HOMICIDE|         50|
+|200302|            STALKING|         10|
+|200310|           OBSCENITY|          1|
+|200402|        INTIMIDATION|         32|
+|200404|          KIDNAPPING|         45|
+|200411|PUBLIC PEACE VIOL...|        181|
+|201607|               THEFT|       5818|
+|201607|             ASSAULT|       1711|
+|201607|           OBSCENITY|          2|
++------+--------------------+-----------+

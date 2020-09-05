@@ -1,0 +1,40 @@
+Description
+
+    We all know that it was 4 way contest at the time of 2014 General elections between BJP, BSP, INC and SP
+    Now UP State elections are underway and it is 3 way contest between BJP, BSP and SP+INC
+    Let us understand how many seats each party would have won in the 3 way contest
+    Data contains header
+    This is to just implement Scala and Spark with interesting use case
+
+Problem Statement
+
+    In 4 way contest BJP won almost 90% of seats in general elections
+    If it was 3 way contest as UP state elections 2017, then how many seats BJP would have won, how many seats SP+INC should have won.
+    Github link for data set – https://github.com/hadoopbase/dataset/blob/master/ls2014.tsv
+    There are ~8K records, open the file, copy the data and paste into file on your machine
+    Data is tab separated
+    First record give the details about data, discard it while processing
+    Data has details about all Lok Sabha constituencies in India, we are only interested in UP
+    There are multiple records for each constituency, each record have details about state, constituency, candidate name, party, number of votes he got
+    Get the votes of BJP, BSP and cumulative votes of INC+SP
+    Final outcome, number of seats BJP, BSP and INC+SP assuming alliance
+
+Solution:
+
+val p23df = spark.read.option("sep","\t")
+                      .option("inferSchema","true")
+                      .option("header","true").csv("/user/mearu0705/election.csv")
+val p23df1=p23df.filter("partyname in ('BJP','BSP','INC','SP')")
+                .select( when (('partyname==="INC" || 'partyname==="SP"),"ALLY".otherwise('partyname).as("party"),'total)
+                .groupBy('party).agg(sum('total).alias("no_of_seats"))
+                
+Results:
+scala> p23df1.show
++-----+-----------+
+|party|no_of_seats|
++-----+-----------+
+|  BJP|  161047761|
+| ALLY|  115274317|
+|  BSP|   22434033|
++-----+-----------+
+
